@@ -1,12 +1,13 @@
 package tictactoe
 import java.util.Scanner
-// import kotlin.math.abs
 
 fun main() {
     val scanner = Scanner(System.`in`)
-    val gameOngoing = true
+    var gameOngoing = true // Useful when we add ability to play multiple times
     var c = "         "
     var whoseTurn = 'X'
+
+    // Print the initial empty game grid
     printGrid(c)
 
     // Loops until "gameOngoing" becomes false: there is a winner or a draw
@@ -14,6 +15,8 @@ fun main() {
 
         var newCellsString = ""
         var badInput = true
+        var totalEmpty = 0
+        var winner = false
 
         // Loops until user inputs valid data, then updates the game grid.
         while (badInput) {
@@ -46,23 +49,12 @@ fun main() {
             }
 
             badInput = false
+            c = newCellsString
         }
 
-        c = newCellsString
-
-        var totalX = 0
-        var totalO = 0
-        var totalEmpty = 0
-        var winner = false
-
-
-        // Tally total Xs, Os, and _ characters on board
+        // Tally total empty spaces (' ' characters) on board
         for (element in c) {
-            when (element) {
-                'X' -> totalX++
-                'O' -> totalO++
-                else -> totalEmpty++
-            }
+            if (element == ' ') totalEmpty++
         }
 
         // Check for three in a row vertically
@@ -96,33 +88,21 @@ fun main() {
             }
         }
 
-//        if (threeX && threeO || abs(totalX - totalO) > 1) {
-//            println("Impossible")
-//        } else if (totalEmpty > 0 && !threeO && !threeX) println("Game not finished")
-//        else if (totalEmpty == 0 && !threeO && !threeX) println("Draw")
-//        else if (threeX) println("X wins")
-//        else println("O wins") //threeO
-
         printGrid(c)
 
+        // Checks to see if the game is over.
         if (winner) {
             println("$whoseTurn wins")
-            return
+            gameOngoing = false
         } else if (totalEmpty == 0 && !winner) {
             println("Draw")
-            return
+            gameOngoing = false
         }
 
         whoseTurn = if (whoseTurn == 'X') 'O'
                     else 'X'
     }
 }
-
-//// Switches which player is taking their turn
-//fun changeWhoseTurn(whoseTurn: Char): Char {
-//    return if (whoseTurn == 'X') 'O'
-//    else 'X'
-//}
 
 //Print grid
 fun printGrid(c: String) {
@@ -132,6 +112,7 @@ fun printGrid(c: String) {
     println("| ${c[6]} ${c[7]} ${c[8]} |")
     println("---------")
 }
+
 //Returns the cell number corresponding to the row and column given
 fun convertRowColumnToCell(row: Char, column: Char): Int {
     return when {
@@ -140,6 +121,7 @@ fun convertRowColumnToCell(row: Char, column: Char): Int {
         else -> column.digitToInt() + 5
     }
 }
+
 //Returns true if the cell is occupied
 fun checkIfCellOccupied(row: Char, column: Char, cells: String): Boolean {
     return cells[convertRowColumnToCell(row, column)] == 'X'
